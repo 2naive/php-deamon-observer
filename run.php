@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Usage php run.php 10 15
+*/
 include 'Observer.class.php';
 
 DEFINE('LOGS_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logs');
@@ -14,7 +17,7 @@ $STDIN  = fopen('/dev/null', 'r');
 $STDOUT = fopen(LOGS_DIR.'/application.log', 'ab');
 $STDERR = fopen(LOGS_DIR.'/error.log', 'ab');
 
-$observer = new Observer( ! empty($argv[1]) ? $argv[1] : NULL);
+$observer = new Observer( ! empty($argv[1]) ? $argv[1] : NULL,  ! empty($argv[2]) ? $argv[2] : NULL);
 $observer->run();
 
 ?>

@@ -12,20 +12,23 @@ class Observer
     protected $stop_server = FALSE;
     // Здесь будем хранить запущенные дочерние процессы
     protected $currentJobs = array();
+    
+    protected $sleep       = 1;
 
-    public function __construct($max_processes = 5, $stop_server = FALSE)
+    public function __construct($max_processes = 5, $sleep, $stop_server = FALSE)
     {
-        $this->max_processes = $max_processes;
-        $this->stop_server = $stop_server;
+        $this->max_processes    = $max_processes;
+        $this->stop_server      = $stop_server;
+        $this->sleep      = $sleep;
         
-        echo "Сonstructed daemon controller".PHP_EOL;
+        echo "Constructed observer deamon".PHP_EOL;
         // Ждем сигналы SIGTERM и SIGCHLD
         pcntl_signal(SIGTERM, array($this, "childSignalHandler"));
         pcntl_signal(SIGCHLD, array($this, "childSignalHandler"));
     }
 
     public function run() {
-        echo "Running daemon controller".PHP_EOL;
+        echo "Running observer deamon".PHP_EOL;
 
         // Пока $stop_server не установится в TRUE, гоняем бесконечный цикл
         while (!$this->stop_server)
@@ -33,8 +36,8 @@ class Observer
             // Если уже запущено максимальное количество дочерних процессов, ждем их завершения
             while(count($this->currentJobs) >= $this->max_processes)
             {
-                echo "Maximum children allowed, waiting...".PHP_EOL;
-                sleep(1);
+                echo "Maximum children allowed, waiting...{$this->sleep}".PHP_EOL;
+                sleep($this->sleep);
             }
             
             $this->launchJob();
@@ -96,7 +99,8 @@ class Observer
     protected function _do()
     {
             // А этот код выполнится дочерним процессом
-            echo "Процесс с ID ".getmypid().PHP_EOL;
+            echo "Child spawn with ID ".getmypid().PHP_EOL;
+            sleep(60);
             exit(); 
     }
 }
